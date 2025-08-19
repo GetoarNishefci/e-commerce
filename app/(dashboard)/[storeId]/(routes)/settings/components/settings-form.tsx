@@ -7,6 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Store } from "@prisma/client";
 import axios from "axios";
@@ -35,6 +36,7 @@ const SettingsForm:React.FC<SettingsFormProps> = ({
     const router = useRouter()
     const [open,setOpen] = useState(false)
     const [loading,setLoading] =useState(false)
+    const origin = useOrigin()
 
 const form = useForm<SettingFormValues>({
     resolver:zodResolver(formSchema),
