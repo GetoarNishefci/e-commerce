@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category } from "@prisma/client";
+import { Billboard, Category } from "@prisma/client";
 import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams,useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ import z from "zod";
 
 interface   CategoryFromProps{
     initialData:Category | null;
+    billboards:Billboard[]
 }
 
 const formSchema = z.object({
@@ -31,7 +33,8 @@ type CategoryFromValues = z.infer<typeof formSchema>
 
 
 const CategoryFrom:React.FC<CategoryFromProps> = ({
-    initialData
+    initialData,
+    billboards
 }) =>{
     const params = useParams()
     const router = useRouter()
@@ -54,14 +57,14 @@ const onSubmit = async (data:CategoryFromValues)=>{
     try{
         setLoading(true)
         if(initialData){
-        await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`,data)
+        await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`,data)
         }
         else{
-            await axios.post(`/api/${params.storeId}/billboards`,data)
+            await axios.post(`/api/${params.storeId}/categories`,data)
 
         }
         router.refresh()
-        router.push(`/${params.storeId}/billboards`)
+        router.push(`/${params.storeId}/categories`)
         toast.success(toastMesage)
     }catch{
             toast.error('Something went wrong.')
@@ -74,12 +77,12 @@ const onSubmit = async (data:CategoryFromValues)=>{
 const onDelete = async () =>{
     try{
         setLoading(true)
-        await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`)
+        await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`)
         router.refresh()
         router.push("/")
-        toast.success("Billboard deleted.")     
+        toast.success("Category deleted.")     
     }catch{
-        toast.error("Make sure you removed all categories using this billboard first.")
+        toast.error("Make sure you removed all products using this category first.")
     }
     finally{
         setLoading(false)
@@ -111,6 +114,27 @@ const onDelete = async () =>{
                 <FormControl>
                     <Input disabled={loading} placeholder="Cateogry Name" {...field}/>
                 </FormControl>
+                <FormMessage/>  
+              </FormItem>  
+            )} />
+              <FormField control={form.control} name="billboardId" render={({field})=>(
+              <FormItem>
+                <FormLabel>Billboard</FormLabel>
+                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                    <SelectValue defaultValue={field.value} placeholder="Selecte a Billboard"/>
+
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {billboards.map((billboard)=>(
+                                <SelectItem key={billboard.id} value={billboard.id}>
+                                        {billboard.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 <FormMessage/>  
               </FormItem>  
             )} />
