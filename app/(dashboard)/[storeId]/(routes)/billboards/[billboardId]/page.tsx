@@ -1,30 +1,29 @@
 import prismadb from "@/lib/prismadb";
-import BillboardFrom from "./components/billboard-form";
+import BillboardForm from "./components/billboard-form";
 
-interface BillboardPageProps{
-    params:{
-        storeId:string;
-        billboardId:string;
-    }
+interface Params {
+  storeId: string;
+  billboardId: string;
 }
 
-const BillboardsPage = async ({ params }: { params: BillboardPageProps["params"] }) => {
+const BillboardsPage = async ({
+  params,
+}: {
+  params: Params;
+}) => {
+  const billboard = await prismadb.billboard.findUnique({
+    where: {
+      id: params.billboardId,
+    },
+  });
 
-    const billboard = await prismadb.billboard.findUnique({
-        where:{
-            id:params.billboardId
-        }
-    });
-
-    console.log(params.billboardId)
-
-    return(
-            <div className="flex-col">
-                    <div className="flex-1 space-y-4 p-8 pt-6">
-                    <BillboardFrom initialData={billboard}/>
-                    </div>
-            </div>
-    );
-}
+  return (
+    <div className="flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <BillboardForm initialData={billboard} />
+      </div>
+    </div>
+  );
+};
 
 export default BillboardsPage;
