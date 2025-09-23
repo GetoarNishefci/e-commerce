@@ -18,9 +18,7 @@ export default async function DashboardLayout({
         redirect('/sign-in');
     }
 
-         if (process.env.NODE_ENV === 'development') {
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
+
 
     const store = await prismadb.store.findFirst({
         where:{
