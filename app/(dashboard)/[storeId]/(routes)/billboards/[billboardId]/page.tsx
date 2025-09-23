@@ -9,11 +9,14 @@ interface Params {
 const BillboardsPage = async ({
   params,
 }: {
-  params: Params;
+  params: Promise<Params>;
 }) => {
+    
+  const resolvedParams = await params;
+  
   const billboard = await prismadb.billboard.findUnique({
     where: {
-      id: params.billboardId,
+      id: resolvedParams.billboardId,
     },
   });
 
