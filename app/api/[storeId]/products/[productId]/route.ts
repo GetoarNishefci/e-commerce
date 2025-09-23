@@ -4,16 +4,18 @@ import { NextResponse } from "next/server"
 
 export async function GET(
     _req:Request,
-    {params}:{params:{productId:string}}
+    {params}:{params:Promise<{productId:string}>}
 ){
     try{
-         if(!params.productId){
+        const resolvedParams = await params;
+        
+         if(!resolvedParams.productId){
             return new NextResponse("productId id required", {status:400})
          }
 
          const product = await prismadb.product.findUnique({
             where:{
-                id:params.productId,
+                id:resolvedParams.productId,
             },
             include:{
                 images:true,
@@ -33,13 +35,14 @@ export async function GET(
 
 export async function PATCH(
     req:Request,
-    {params}:{params:{storeId:string, productId:string}}
+    {params}:{params:Promise<{storeId:string, productId:string}>}
 ){
     try{
+        const resolvedParams = await params;
         const {userId} = await auth()
-const body = await req.json()
+        const body = await req.json()
 
- const { name,price,categoryId,colorId,sizeId,images,isFeatured,isArchived } = body;
+        const { name,price,categoryId,colorId,sizeId,images,isFeatured,isArchived } = body;
 
         if (!userId) {
             return new NextResponse("unauthenticated", { status: 401 });
@@ -48,29 +51,29 @@ const body = await req.json()
         if (!name) {
             return new NextResponse("name required", { status: 400 });
         }
-          if (!price) {
+        if (!price) {
             return new NextResponse("price required", { status: 400 });
         }
-           if (!categoryId) {
+        if (!categoryId) {
             return new NextResponse("categoryId required", { status: 400 });
         }
-           if (!colorId) {
+        if (!colorId) {
             return new NextResponse("colorId required", { status: 400 });
         }
-           if (!sizeId) {
+        if (!sizeId) {
             return new NextResponse("sizeId required", { status: 400 });
         }
-           if (!images || !images.length) {
+        if (!images || !images.length) {
             return new NextResponse("images required", { status: 400 });
         }
      
-         if(!params.productId){
+         if(!resolvedParams.productId){
             return new NextResponse("billboard id required", {status:400})
          }
 
          const storeByUserId = await prismadb.store.findFirst({
             where:{
-                id:params.storeId,
+                id:resolvedParams.storeId,
                 userId
             }
          })
@@ -81,7 +84,7 @@ const body = await req.json()
 
          await prismadb.product.update({
             where:{
-                id:params.productId,
+                id:resolvedParams.productId,
             },
             data:{
                name,
@@ -99,7 +102,7 @@ const body = await req.json()
 
          const product = await prismadb.product.update({
             where:{
-                id:params.productId
+                id:resolvedParams.productId
             },
             data:{
                 images:{
@@ -122,22 +125,23 @@ const body = await req.json()
 
 export async function DELETE(
     _req:Request,
-    {params}:{params:{storeId:string ,productId:string}}
+    {params}:{params:Promise<{storeId:string ,productId:string}>}
 ){
     try{
+        const resolvedParams = await params;
         const {userId} = await auth()
 
         if(!userId){
             return new NextResponse("Unauthenticated",{status:401})
         }
 
-         if(!params.productId){
+         if(!resolvedParams.productId){
             return new NextResponse("productId required", {status:400})
          }
 
     const storeByUserId = await prismadb.store.findFirst({
             where:{
-                id:params.storeId,
+                id:resolvedParams.storeId,
                 userId
             }
          })
@@ -148,7 +152,7 @@ export async function DELETE(
 
          const product = await prismadb.product.deleteMany({
             where:{
-                id:params.productId,
+                id:resolvedParams.productId,
             },
          })
 

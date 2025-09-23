@@ -4,16 +4,18 @@ import { NextResponse } from "next/server"
 
 export async function GET(
     _req:Request,
-    {params}:{params:{billboardId:string}}
+    {params}:{params:Promise<{billboardId:string}>}
 ){
+
+    const resolvedParams = await params;
     try{
-         if(!params.billboardId){
+         if(!resolvedParams.billboardId){
             return new NextResponse("billboard id required", {status:400})
          }
 
          const billboard = await prismadb.billboard.findUnique({
             where:{
-                id:params.billboardId,
+                id:resolvedParams.billboardId,
             },
          })
 
@@ -27,8 +29,10 @@ export async function GET(
 
 export async function PATCH(
     req:Request,
-    {params}:{params:{storeId:string, billboardId:string}}
+    {params}:{params:Promise<{storeId:string, billboardId:string}>}
 ){
+
+    const resolvedParams = await params;
     try{
         const {userId} = await auth()
 const body = await req.json()
@@ -46,13 +50,13 @@ const {label,imageUrl} = body;
             return new NextResponse("imageUrl is required",{status:400});
         }
 
-         if(!params.billboardId){
+         if(!resolvedParams.billboardId){
             return new NextResponse("billboard id required", {status:400})
          }
 
          const storeByUserId = await prismadb.store.findFirst({
             where:{
-                id:params.storeId,
+                id:resolvedParams.storeId,
                 userId
             }
          })
@@ -63,7 +67,7 @@ const {label,imageUrl} = body;
 
          const billboard = await prismadb.billboard.updateMany({
             where:{
-                id:params.billboardId,
+                id:resolvedParams.billboardId,
             },
             data:{
                 label,
@@ -81,8 +85,10 @@ const {label,imageUrl} = body;
 
 export async function DELETE(
     _req:Request,
-    {params}:{params:{storeId:string ,billboardId:string}}
+    {params}:{params:Promise<{storeId:string ,billboardId:string}>}
 ){
+
+    const resolvedParams = await params;
     try{
         const {userId} = await auth()
 
@@ -90,13 +96,13 @@ export async function DELETE(
             return new NextResponse("Unauthenticated",{status:401})
         }
 
-         if(!params.billboardId){
+         if(!resolvedParams.billboardId){
             return new NextResponse("billboard id required", {status:400})
          }
 
     const storeByUserId = await prismadb.store.findFirst({
             where:{
-                id:params.storeId,
+                id:resolvedParams.storeId,
                 userId
             }
          })
@@ -107,7 +113,7 @@ export async function DELETE(
 
          const billboard = await prismadb.billboard.deleteMany({
             where:{
-                id:params.billboardId,
+                id:resolvedParams.billboardId,
             },
          })
 
