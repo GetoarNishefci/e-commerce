@@ -2,12 +2,14 @@ import prismadb from "@/lib/prismadb";
 import ProductForm from "./components/product-form";
 
 const ProductPage = async({params}:{
-    params:{productId:string,storeId:string}
+    params:Promise<{productId:string,storeId:string}>
 }) =>{
+
+    const resolvedParams = await params
 
     const product = await prismadb.product.findUnique({
         where:{
-            id:params.productId
+            id:resolvedParams.productId
         },
         include:{
             images:true
@@ -16,17 +18,17 @@ const ProductPage = async({params}:{
 
     const categories = await prismadb.category.findMany({
         where:{
-            storeId:params.storeId
+            storeId:resolvedParams.storeId
         }
     })
         const sizes = await prismadb.size.findMany({
         where:{
-            storeId:params.storeId
+            storeId:resolvedParams.storeId
         }
     })
        const colors = await prismadb.color.findMany({
         where:{
-            storeId:params.storeId
+            storeId:resolvedParams.storeId
         }
     })
 
