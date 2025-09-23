@@ -9,7 +9,6 @@ import ImageUpload from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {  Category, Color, Image, Product, Size } from "@prisma/client";
 import axios from "axios";
@@ -33,7 +32,7 @@ interface ProductFormProps{
 const formSchema = z.object({
   name:z.string().min(1),
   images:z.object({url:z.string()}).array(),
-  price: z.coerce.number().min(1),
+price: z.number().min(1), // Remove coerce and handle parsing separately
 categoryId:z.string().min(1),
 colorId:z.string().min(1),
 sizeId:z.string().min(1),
@@ -63,7 +62,7 @@ const ProductForm:React.FC<ProductFormProps> = ({
 
     
 const form = useForm<ProductFormValues>({
-    resolver:zodResolver(formSchema) as any,
+    resolver:zodResolver(formSchema) ,
     defaultValues:initialData ? {...initialData,price:parseFloat(String(initialData?.price))} : {name:'',images:[],price:0,categoryId:'',colorId:'',sizeId:'',isFeatured:false,isArchived:false},
 });
 
@@ -71,11 +70,17 @@ const onSubmit = async (data:ProductFormValues)=>{
 
     try{
         setLoading(true)
+
+          const submitData = {
+            ...data,
+            price: Number(data.price)
+        };
+
         if(initialData){
-        await axios.patch(`/api/${params.storeId}/products/${params.productId}`,data)
+        await axios.patch(`/api/${params.storeId}/products/${params.productId}`,submitData)
         }
         else{
-            await axios.post(`/api/${params.storeId}/products`,data)
+            await axios.post(`/api/${params.storeId}/products`,submitData)
 
         }
         router.refresh()

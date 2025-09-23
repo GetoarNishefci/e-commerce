@@ -1,7 +1,6 @@
 "use client"
 
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
@@ -40,7 +39,6 @@ const CategoryFrom:React.FC<CategoryFromProps> = ({
     const router = useRouter()
     const [open,setOpen] = useState(false)
     const [loading,setLoading] =useState(false)
-    const origin = useOrigin()
 
     const title = initialData ? 'Edit Category' : "Create Category"
     const description = initialData ? 'Edit Category' : "Create Category"

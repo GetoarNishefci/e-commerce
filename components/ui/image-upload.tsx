@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, Trash } from "lucide-react";
 import Image from "next/image";
-import {CldUploadWidget} from "next-cloudinary"
+import {CldUploadWidget, CloudinaryUploadWidgetResults} from "next-cloudinary"
 
 interface ImageUploadProps {
     disabled?:boolean;
@@ -28,9 +28,11 @@ const ImageUpload:React.FC<ImageUploadProps> = ({
         },[]);
     
     
-        const onUpload = (result:any) =>{
-            onChange(result.info.secure_url)
-        }
+       const onUpload = (result: CloudinaryUploadWidgetResults) => {
+  if (typeof result.info !== 'string' && result.info?.secure_url) {
+    onChange(result.info.secure_url);
+  }
+};
 
             if(!isMounted){
             return null;

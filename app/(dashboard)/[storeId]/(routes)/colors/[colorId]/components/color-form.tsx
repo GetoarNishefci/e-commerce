@@ -1,11 +1,9 @@
 "use client"
 
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
-import ImageUpload from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useOrigin } from "@/hooks/use-origin";
@@ -40,7 +38,6 @@ const ColorFrom:React.FC<ColorFromProps> = ({
     const router = useRouter()
     const [open,setOpen] = useState(false)
     const [loading,setLoading] =useState(false)
-    const origin = useOrigin()
 
     const title = initialData ? 'Edit Color' : "Create Color"
     const description = initialData ? 'Edit Color' : "Create Color"
