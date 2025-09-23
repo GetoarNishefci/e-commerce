@@ -9,17 +9,18 @@ import { Separator } from "@/components/ui/separator";
 import { formatter } from "@/lib/utils";
 import { CreditCard, DollarSign, Package } from "lucide-react";
 
-interface DashboardPageProps{
-    params:{storeId:string}
-};
-
-const DashboardPage:React.FC<DashboardPageProps> = async ({
+const DashboardPage = async ({
     params
-})=>{
-        const totalRevenue = await getTotalRevenue(params.storeId)
-        const salesCount = await getSalesCount(params.storeId)
-        const stockCount = await getStockCount(params.storeId)
-        const graphRevenue = await getGraphRevenue(params.storeId)
+}: {
+    params: Promise<{storeId: string}>
+}) => {
+
+        const resolvedParams = await params;
+
+        const totalRevenue = await getTotalRevenue(resolvedParams.storeId)
+        const salesCount = await getSalesCount(resolvedParams.storeId)
+        const stockCount = await getStockCount(resolvedParams.storeId)
+        const graphRevenue = await getGraphRevenue(resolvedParams.storeId)
 
   
     return (
