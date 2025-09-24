@@ -15,7 +15,7 @@ import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams,useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm,Resolver } from "react-hook-form";
 import toast from "react-hot-toast";
 import z from "zod";
 
@@ -32,8 +32,8 @@ interface ProductFormProps{
 const formSchema = z.object({
   name:z.string().min(1),
   images:z.object({url:z.string()}).array(),
-price: z.number().min(1), // Remove coerce and handle parsing separately
-categoryId:z.string().min(1),
+  price: z.coerce.number().min(1), 
+  categoryId:z.string().min(1),
 colorId:z.string().min(1),
 sizeId:z.string().min(1),
 isFeatured:z.boolean().default(false).optional(),
@@ -62,8 +62,8 @@ const ProductForm:React.FC<ProductFormProps> = ({
 
     
 const form = useForm<ProductFormValues>({
-    resolver:zodResolver(formSchema) ,
-    defaultValues:initialData ? {...initialData,price:parseFloat(String(initialData?.price))} : {name:'',images:[],price:0,categoryId:'',colorId:'',sizeId:'',isFeatured:false,isArchived:false},
+  resolver: zodResolver(formSchema) as Resolver<ProductFormValues>,
+      defaultValues:initialData ? {...initialData,price:parseFloat(String(initialData?.price))} : {name:'',images:[],price:0,categoryId:'',colorId:'',sizeId:'',isFeatured:false,isArchived:false},
 });
 
 const onSubmit = async (data:ProductFormValues)=>{
